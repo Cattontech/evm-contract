@@ -5,7 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { OFT } from "@layerzerolabs/oft-evm/contracts/OFT.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-error InvalidLenght();
+error InvalidLength();
 error ZeroAddress();
 error MaxCapExceeded();
 error MaxWalletCapExceeded();
@@ -13,7 +13,7 @@ error AddressIsNotWhitelisted();
 error AddressIsBlacklisted();
 error TradingAlreadyEnabled();
 error TradingNotEnabled();
-error MaxTokenAmount(address _token, uint256 _amount);
+error MaxTokenAmount(address _token, uint256 _amount, uint256 _maxAllowed);
 
 contract CATTON is OFT {
     uint16 public constant PRECISION = 10_000;
@@ -28,7 +28,7 @@ contract CATTON is OFT {
     uint256[] public holdingAmounts; // amount token list
     uint256[] public maxHoldingAmount; // amount this token
 
-    mapping(address token => bool isBlacklisted) public blacklistsAddresses;
+    mapping(address token => bool isBlacklisted) public blacklistedAddresses;
     mapping(address account => bool isWhitelisted) public whitelistedAddresses;
 
     event MaxWalletCap(uint16 _max_wallet_cap);
@@ -78,7 +78,7 @@ contract CATTON is OFT {
         emit Limited(limited);
 
         if (_tokenAddresses.length != _amount.length || _tokenAddresses.length != _maxHoldingAmount.length) {
-            revert InvalidLenght();
+            revert InvalidLength();
         }
 
         tokenListAddresses = new address[](_tokenAddresses.length);
@@ -124,7 +124,7 @@ contract CATTON is OFT {
         uint256 length = _addresses.length;
         for (uint256 i = 0; i < length; ) {
             address _address = _addresses[i];
-            blacklistsAddresses[_address] = _isBlacklisted;
+            blacklistedAddresses[_address] = _isBlacklisted;
             unchecked {
                 i++;
             }
@@ -133,7 +133,7 @@ contract CATTON is OFT {
     }
 
     function _update(address _from, address _to, uint256 _amount) internal override {
-        bool isFromBlacklisted = blacklistsAddresses[_from];
+        bool isFromBlacklisted = blacklistedAddresses[_from];
 
         // Block blacklisted users
         if (isFromBlacklisted) {
@@ -195,7 +195,7 @@ contract CATTON is OFT {
                 uint256 tokenBalance = ERC20(tokenAddress).balanceOf(recipient);
 
                 if (super.balanceOf(recipient) + _amount >= maxHoldingAmount[i] && tokenBalance >= holdingAmounts[i]) {
-                    revert MaxTokenAmount(tokenAddress, tokenBalance);
+                    revert MaxTokenAmount(tokenAddress, tokenBalance, maxHoldingAmount[i]);
                 }
 
                 unchecked {
