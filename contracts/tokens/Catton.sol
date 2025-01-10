@@ -189,8 +189,8 @@ contract CATTON is OFT {
          */
 
         if (limited && isFromLiquidityPair) {
+            address recipient = _to; // Fix stack too deep
             for (uint256 i = 0; i < tokenListAddresses.length; ) {
-                address recipient = _to; // Fix stack too deep
                 address tokenAddress = tokenListAddresses[i];
                 uint256 tokenBalance = ERC20(tokenAddress).balanceOf(recipient);
 

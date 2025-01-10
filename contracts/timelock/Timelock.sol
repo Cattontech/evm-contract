@@ -66,9 +66,7 @@ contract Timelock {
             revert EstimatedExecutionTimeNotSatisfyDelay();
         }
 
-        bytes32 txHash = keccak256(
-            abi.encode(target, value, signature, data, eta)
-        );
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
         queuedTransactions[txHash] = true;
 
         emit QueueTransaction(txHash, target, value, signature, data, eta);
@@ -82,9 +80,7 @@ contract Timelock {
         bytes memory data,
         uint256 eta
     ) public onlyAdmin {
-        bytes32 txHash = keccak256(
-            abi.encode(target, value, signature, data, eta)
-        );
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
         queuedTransactions[txHash] = false;
 
         emit CancelTransaction(txHash, target, value, signature, data, eta);
@@ -97,9 +93,7 @@ contract Timelock {
         bytes memory data,
         uint256 eta
     ) public payable onlyAdmin returns (bytes memory) {
-        bytes32 txHash = keccak256(
-            abi.encode(target, value, signature, data, eta)
-        );
+        bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
         if (!queuedTransactions[txHash]) {
             revert TransactionNotEnqueued();
         }
@@ -117,16 +111,11 @@ contract Timelock {
         if (bytes(signature).length == 0) {
             callData = data;
         } else {
-            callData = abi.encodePacked(
-                bytes4(keccak256(bytes(signature))),
-                data
-            );
+            callData = abi.encodePacked(bytes4(keccak256(bytes(signature))), data);
         }
         // Execute the call
         // solium-disable-next-line security/no-call-value
-        (bool success, bytes memory returnData) = target.call{value: value}(
-            callData
-        );
+        (bool success, bytes memory returnData) = target.call{ value: value }(callData);
         if (!success) {
             revert TransactionExecutionReverted(txHash);
         }
