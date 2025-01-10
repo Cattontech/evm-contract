@@ -25,7 +25,7 @@ This repository contains the implementation details for the **Catton AI Token Co
 - **`setMaxWalletCap(uint16 _cap)`**: Updates wallet cap.
 - **`batchWhitelist(address[] calldata _addresses, bool _status)`**: Manages whitelist status.
 - **`batchBlacklist(address[] calldata _addresses, bool _status)`**: Manages blacklist status.
-- **`setRule(bool _limited, address[] calldata _tokenAddresses, uint256[] calldata _amounts, uint256[] calldata _maxHoldingAmounts)`**: Configures token holding rules.
+- **`setRule(address[] calldata _tokenAddresses, uint256[] calldata _amounts, uint256[] calldata _maxHoldingAmounts)`**: Configures token holding rules.
 
 ### **Events**
 - **`TradingEnabled(uint256 timestamp)`**: Triggered when trading is enabled.

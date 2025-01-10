@@ -69,14 +69,10 @@ contract CATTON is OFT {
     }
 
     function setRule(
-        bool _limited,
         address[] calldata _tokenAddresses,
         uint256[] calldata _amount,
         uint256[] calldata _maxHoldingAmount
     ) external onlyOwner {
-        limited = _limited;
-        emit Limited(limited);
-
         if (_tokenAddresses.length != _amount.length || _tokenAddresses.length != _maxHoldingAmount.length) {
             revert InvalidLength();
         }
