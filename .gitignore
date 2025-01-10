@@ -1,17 +1,24 @@
 node_modules
 .env
+coverage
+coverage.json
+typechain
+typechain-types
 
 # Hardhat files
-/cache
-/artifacts
+cache
+artifacts
 
-# TypeChain files
-/typechain
-/typechain-types
 
-# solidity-coverage files
-/coverage
-/coverage.json
+# LayerZero specific files
+.layerzero
 
-# Hardhat Ignition default folder for deployments against a local node
-ignition/deployments/chain-31337
+# foundry test compilation files
+out
+
+# pnpm
+pnpm-error.log
+
+# Editor and OS files
+.DS_Store
+.idea

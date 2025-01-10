@@ -1,24 +1,76 @@
-# Catton AI Contracts
+# Catton Contracts
 
-This repository contains smart contracts built for the EVM (Ethereum Virtual Machine) using Hardhat.
+This repository contains the implementation details for the **Catton AI Token Contract** and the **Timelock Contract**, designed to ensure secure token distribution and robust governance mechanisms.
 
-## Contracts Overview
+---
 
-### 1. Catton Token
-- A standard ERC-20 token implementation.
-- Provides basic token functionality such as minting, transferring, and burning tokens.
-- Includes additional custom logic to align with project requirements.
+## **Catton AI Token Contract**
 
-### 2. Timelock
-- A governance-focused contract to enforce a delay on executing critical transactions.
-- Ensures operations such as upgrades or fund transfers are queued for a specific period before execution.
-- Enhances security and trust by preventing instant execution of sensitive actions.
+### **Overview**
+- **Token Name:** Catton AI  
+- **Symbol:** CATON  
+- **Standard:** LayerZero OFT (Omnichain Fungible Token)  
+- **Supply:** Total supply minted at deployment  
 
-## Development and Testing
-These contracts were developed and tested using the Hardhat framework to ensure reliability and compatibility with the EVM.
+### **Features**
+- **Trading Restrictions:** Initially disabled, can be enabled by the owner.
+- **Wallet Cap:** Enforces maximum token holdings per wallet.
+- **Address Management:** Includes whitelisting and blacklisting capabilities.
+- **Liquidity Pair Management:** Supports liquidity pair configuration.
+- **Anti-Bot Protections:** Implements trading and holding restrictions for 10 minutes post-launch.
+- **Cross-Chain Support:** Enables seamless cross-chain interactions via LayerZero.
 
-## Getting Started
-To deploy or test these contracts, follow these steps:
-1. Install dependencies:
-   ```bash
-   npm install
+### **Key Functions**
+- **`enableTrading()`**: Enables trading.
+- **`setMaxWalletCap(uint16 _cap)`**: Updates wallet cap.
+- **`batchWhitelist(address[] calldata _addresses, bool _status)`**: Manages whitelist status.
+- **`batchBlacklist(address[] calldata _addresses, bool _status)`**: Manages blacklist status.
+- **`setRule(bool _limited, address[] calldata _tokenAddresses, uint256[] calldata _amounts, uint256[] calldata _maxHoldingAmounts)`**: Configures token holding rules.
+
+### **Events**
+- **`TradingEnabled(uint256 timestamp)`**: Triggered when trading is enabled.
+- **`MaxWalletCap(uint16 cap)`**: Indicates a wallet cap update.
+- **`AddressesWhitelisted(address[] addresses, bool status)`**: Logs whitelist updates.
+- **`AddressesBlacklisted(address[] addresses, bool status)`**: Logs blacklist updates.
+
+---
+
+## **Timelock Contract**
+
+### **Overview**
+The Timelock Contract ensures secure governance by introducing a delay for critical administrative actions, enabling a review period before execution.
+
+### **Features**
+- **Time-Delayed Execution:** Enforces a predefined delay for administrative actions.
+- **Administrator Role:** Assigns trusted accounts to propose and execute changes.
+- **Transparent Process:** All transactions must be queued, delayed, and then executed.
+
+### **Key Functions**
+- **`queueTransaction(address target, uint256 value, string calldata signature, bytes calldata data, uint256 eta)`**: Queues a transaction for delayed execution.
+- **`executeTransaction(address target, uint256 value, string calldata signature, bytes calldata data, uint256 eta)`**: Executes a queued transaction after the delay.
+- **`cancelTransaction(address target, uint256 value, string calldata signature, bytes calldata data, uint256 eta)`**: Cancels a queued transaction.
+
+### **Events**
+- **`TransactionQueued(address target, uint256 value, string signature, bytes data, uint256 eta)`**: Logs queued transactions.
+- **`TransactionExecuted(address target, uint256 value, string signature, bytes data, uint256 eta)`**: Logs executed transactions.
+- **`TransactionCanceled(address target, uint256 value, string signature, bytes data, uint256 eta)`**: Logs canceled transactions.
+
+---
+
+## **Testing Instructions**
+
+### **Catton AI Token Contract**
+- Validate trading enablement and restrictions.
+- Test whitelisting and blacklisting functionality.
+- Verify cross-chain transfer capability using LayerZero tools.
+
+### **Timelock Contract**
+- Test transaction queueing and delayed execution.
+- Verify cancellation mechanisms for queued transactions.
+- Ensure unauthorized actions are rejected.
+
+---
+
+## **Conclusion**
+The combination of the Catton AI Token Contract and the Timelock Contract ensures secure, efficient, and transparent token operations. These contracts are tailored for robust governance and seamless cross-chain integrations.
+
