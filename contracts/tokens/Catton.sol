@@ -11,6 +11,7 @@ error MaxCapExceeded();
 error MaxWalletCapExceeded();
 error AddressIsNotWhitelisted();
 error AddressIsBlacklisted();
+error LiquidityPairNotSet();
 error TradingAlreadyEnabled();
 error TradingNotEnabled();
 error MaxTokenAmount(address _token, uint256 _amount, uint256 _maxAllowed);
@@ -54,6 +55,7 @@ contract CATTON is OFT {
 
     // Can only be called once
     function enableTrading() external onlyOwner {
+        if (liquidityPair == address(0)) revert LiquidityPairNotSet();
         if (tradingEnabled) revert TradingAlreadyEnabled();
         tradingEnabled = true;
         launchTime = block.timestamp;
