@@ -24,15 +24,12 @@ This repository contains the implementation details for the **Catton AI Token Co
 - **`enableTrading()`**: Enables trading.
 - **`setMaxWalletCap(uint16 _cap)`**: Updates wallet cap.
 - **`batchWhitelist(address[] calldata _addresses, bool _status)`**: Manages whitelist status.
-- **`batchBlacklist(address[] calldata _addresses, bool _status)`**: Manages blacklist status.
 - **`setRule(address[] calldata _tokenAddresses, uint256[] calldata _amounts, uint256[] calldata _maxHoldingAmounts)`**: Configures token holding rules.
 
 ### **Events**
 - **`TradingEnabled(uint256 timestamp)`**: Triggered when trading is enabled.
 - **`MaxWalletCap(uint16 cap)`**: Indicates a wallet cap update.
 - **`AddressesWhitelisted(address[] addresses, bool status)`**: Logs whitelist updates.
-- **`AddressesBlacklisted(address[] addresses, bool status)`**: Logs blacklist updates.
-
 ---
 
 ## **Timelock Contract**
@@ -61,7 +58,7 @@ The Timelock Contract ensures secure governance by introducing a delay for criti
 
 ### **Catton AI Token Contract**
 - Validate trading enablement and restrictions.
-- Test whitelisting and blacklisting functionality.
+- Test whitelisting functionality.
 - Verify cross-chain transfer capability using LayerZero tools.
 
 ### **Timelock Contract**

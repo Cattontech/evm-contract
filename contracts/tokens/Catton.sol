@@ -10,7 +10,6 @@ error ZeroAddress();
 error MaxCapExceeded();
 error MaxWalletCapExceeded();
 error AddressIsNotWhitelisted();
-error AddressIsBlacklisted();
 error LiquidityPairNotSet();
 error TradingAlreadyEnabled();
 error TradingNotEnabled();
@@ -29,14 +28,12 @@ contract CATTON is OFT {
     uint256[] public holdingAmounts; // amount token list
     uint256[] public maxHoldingAmount; // amount this token
 
-    mapping(address token => bool isBlacklisted) public blacklistedAddresses;
     mapping(address account => bool isWhitelisted) public whitelistedAddresses;
 
     event MaxWalletCap(uint16 _max_wallet_cap);
     event TradingEnabled(uint256 _timestamp);
     event LiquidityPairSet(address indexed _pair);
     event AddressesWhitelisted(address[] _addresses, bool _isWhitelisted);
-    event AddressesBlacklisted(address[] _addresses, bool _isBlacklisted);
     event Limited(bool _limited);
     event TokenListAddresses(address[] _tokenAddresses, uint256[] _holdingAmounts, uint256[] _maxHoldingAmount);
 
@@ -118,26 +115,7 @@ contract CATTON is OFT {
         emit AddressesWhitelisted(_addresses, _isWhitelisted);
     }
 
-    function batchBlacklist(address[] calldata _addresses, bool _isBlacklisted) external onlyOwner {
-        uint256 length = _addresses.length;
-        for (uint256 i = 0; i < length; ) {
-            address _address = _addresses[i];
-            blacklistedAddresses[_address] = _isBlacklisted;
-            unchecked {
-                i++;
-            }
-        }
-        emit AddressesBlacklisted(_addresses, _isBlacklisted);
-    }
-
     function _update(address _from, address _to, uint256 _amount) internal override {
-        bool isFromBlacklisted = blacklistedAddresses[_from];
-
-        // Block blacklisted users
-        if (isFromBlacklisted) {
-            revert AddressIsBlacklisted();
-        }
-
         bool isTradingEnabled = tradingEnabled;
         bool isFromWhitelisted = whitelistedAddresses[_from];
         bool isToWhitelisted = whitelistedAddresses[_to];
@@ -157,7 +135,6 @@ contract CATTON is OFT {
          * 1. Only whitelisted addresses can transfer tokens
          * 2. Maximum wallet cap of 0.1% of total supply is enforced
          */
-
         if (isTradingEnabled && block.timestamp < launchTime + 10 minutes) {
             bool isWhitelisted = isToWhitelisted || isFromWhitelisted;
 
@@ -185,7 +162,6 @@ contract CATTON is OFT {
         /*
          * Token holders on the list will be restricted.
          */
-
         if (limited && isFromLiquidityPair) {
             address recipient = _to; // Fix stack too deep
             for (uint256 i = 0; i < tokenListAddresses.length; ) {
@@ -203,5 +179,15 @@ contract CATTON is OFT {
         }
 
         super._update(_from, _to, _amount);
+    }
+
+    // owner can drain tokens that are sent here by mistake
+    function rescue(address _token, address _to) external onlyOwner {
+        require(_to != address(0), "Invalid address");
+        if (_token == address(0)) {
+            payable(_to).transfer(address(this).balance);
+        } else {
+            ERC20(_token).transfer(_to, ERC20(_token).balanceOf(address(this)));
+        }
     }
 }
