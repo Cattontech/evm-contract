@@ -99,7 +99,6 @@ contract CATTON is OFT {
     function setLiquidityPair(address _pair) external onlyOwner {
         if (_pair == address(0)) revert ZeroAddress();
         liquidityPair = _pair;
-        whitelistedAddresses[_pair] = true;
         emit LiquidityPairSet(_pair);
     }
 
