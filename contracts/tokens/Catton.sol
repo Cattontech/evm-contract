@@ -40,7 +40,7 @@ contract CATTON is OFT {
     constructor(
         address _lzEndpoint,
         uint256 _totalSupply
-    ) OFT("Catton AI", "CATON", _lzEndpoint, _msgSender()) Ownable(_msgSender()) {
+    ) OFT("Catton AI", "CATTON", _lzEndpoint, _msgSender()) Ownable(_msgSender()) {
         max_wallet_cap = 2; // 0.02%
         limited = true;
         _mint(_msgSender(), _totalSupply);
